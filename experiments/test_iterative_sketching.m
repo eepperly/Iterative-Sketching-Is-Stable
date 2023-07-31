@@ -21,16 +21,7 @@ for idx1 = 1:length(conds)
     cond_A = conds(idx1);
     for idx2 = 1:length(res_sizes)
         res_size = res_sizes(idx2);
-        U = haarorth(m);
-        V = haarorth(n);
-        S = diag(logspace(-log10(cond_A),0,n));
-        A = U(:,1:n)*S*V';
-        
-        x = orth(randn(n,1));
-        
-        r = orth(U(:,(n+1):end)*randn(m-n,1)) * res_size;
-        
-        b = A*x + r;
+	[A,b,x,r] = random_ls_problem(m,n,cond_A,res_size);
 
         if real_run
             summary = @(y) [norm(y-x)/norm(x);norm(b-A*y-r)/norm(b);backward_error_ls(A,b,y)/norm(A,'fro')];
@@ -82,21 +73,26 @@ if real_run
         if idx2 == 1
             legend({'','$\kappa = 10^{15}$','','','$\kappa = 10^{10}$','','','$\kappa = 10^{1}$',''},'Location','best')
         end
-        
-        saveas(gcf, sprintf('r%d_forward.fig', round(-log10(res_sizes(idx2)))))
-        saveas(gcf, sprintf('r%d_forward.png', round(-log10(res_sizes(idx2)))))
-        
+
+	if real_run
+	   saveas(gcf, sprintf('../figs/r%d_forward.fig', round(-log10(res_sizes(idx2)))))
+           saveas(gcf, sprintf('../figs/r%d_forward.png', round(-log10(res_sizes(idx2)))))
+	end
     
         figure(3*(idx2-1)+2)
         xlabel('Iteration $i$')
         ylabel('Residual error $\|\mbox{\boldmath $r$}(\mbox{\boldmath $x$})-\mbox{\boldmath $r$}(\mbox{\boldmath $\widehat{x}$}_i)\|/\|\mbox{\boldmath $b$}\|$')
-        saveas(gcf, sprintf('r%d_residual.fig', round(-log10(res_sizes(idx2)))))
-        saveas(gcf, sprintf('r%d_residual.png', round(-log10(res_sizes(idx2)))))
+	if real_run
+           saveas(gcf, sprintf('../figs/r%d_residual.fig', round(-log10(res_sizes(idx2)))))
+           saveas(gcf, sprintf('../figs/r%d_residual.png', round(-log10(res_sizes(idx2)))))
+	end
     
         figure(3*(idx2-1)+3)
         xlabel('Iteration $i$')
         ylabel('Backward error $\eta(\mbox{\boldmath $\widehat{x}$}_i)//\|\mbox{\boldmath $A$}\|_{\rm F}$')
-        saveas(gcf, sprintf('r%d_backward.fig', round(-log10(res_sizes(idx2)))))
-        saveas(gcf, sprintf('r%d_backward.png', round(-log10(res_sizes(idx2)))))
+	if real_run
+           saveas(gcf, sprintf('r%d_backward.fig', round(-log10(res_sizes(idx2)))))
+           saveas(gcf, sprintf('r%d_backward.png', round(-log10(res_sizes(idx2)))))
+	end
     end
 end
