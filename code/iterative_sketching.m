@@ -1,14 +1,30 @@
 function [x,stats] = iterative_sketching(A,b,varargin)
+%ITERATIVE_SKETCHING Solve A*x = b in the least-squares sense by the method
+%of iterative sketching
+%   Optional parameters (use [] for default value):
+%   - d: sketching dimension (default max(10*m/n, 20*n) for basic method
+%     and max(10*m/n, 4*n) with optimal damping)
+%   - q: number of steps. If unspecified, number of steps will be
+%     adaptively
+%   - summary: a function of the current iterate to be recorded at each
+%     iteration. All summary values will be rows of stats, the second
+%     output of this function.
+%   - verbose: if true, print at each iteration.
+%   - damping: damping coefficient (default 0). If 'optimal', the optimal
+%     coefficient will be computed as a function of d and n.
+%   - momentum: momentum coefficient (default 0). If 'optimal', the optimal
+%     coefficient will be computed as a function of d and n.
+
     m = size(A,1);
     n = size(A,2);
     
     if length(varargin) >= 1 && ~isempty(varargin{1})
         d = varargin{1};
     else
-        if ~isempty(varargin{5}) && strcmp(varargin{5}, 'optimal') 
-            d = max(ceil(10*m/n), 4*n);
+        if length(varargin) >= 5 && ~isempty(varargin{5}) && strcmp(varargin{5}, 'optimal') 
+            d = max(ceil(40*m/n), 4*n);
         else
-            d = max(ceil(10*m/n), 20*n);
+            d = max(ceil(40*m/n), 20*n);
         end
     end
     
@@ -63,26 +79,40 @@ function [x,stats] = iterative_sketching(A,b,varargin)
     xold = x;
     rold = b-A*x;
     if ~isempty(summary); stats(end+1,:) = summary(x); end
-    oldupdatenorms = [Inf Inf];
     
+    Acond = condest(R);
+    if isempty(q)
+        z = randn(n,1);
+        for i = 1:ceil(log(n))
+            z = z / norm(z); z = R'*z;
+            z = z / norm(z); z = R*z;
+        end
+        Anorm = norm(z);
+    end
+
+    resest = norm(rold) / norm(b);
+    if Acond >= 5e-3/eps && resest >= sqrt(eps)
+        warning('Condition number (est = %e) and relative residual (est = %e) both appear to be large',...
+            Acond, resest)
+    end
+
     iter = 1;
     while true
         xcopy = x;
         x = x + damping * (R\(R'\(A'*rold))) + momentum*(x-xold);
         xold = xcopy;
         r = b-A*x;
-        updatenorm = norm(r - rold);
+        updatenorm = norm(r-rold);
         rold = r;
         if ~isempty(summary); stats(end+1,:) = summary(x); end
         if verbose; fprintf('%d\t%e\n',iter,updatenorm); end
         iter = iter + 1;
-        if (~isempty(q) && iter > q) || (isempty(q) && updatenorm > max(oldupdatenorms) && iter >= 10)
+        if (~isempty(q) && iter > q) || (isempty(q) &&...
+                updatenorm <= eps*(Anorm * norm(x) + 0.01*Acond*norm(r)))
             break
         elseif isempty(q) && iter >= 100
             warning('Iterative sketching failed to meet tolerance')
             break
         end
-        oldupdatenorms(2) = oldupdatenorms(1);
-        oldupdatenorms(1) = updatenorm;
     end
 end
