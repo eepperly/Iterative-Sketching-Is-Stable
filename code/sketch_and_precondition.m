@@ -1,4 +1,16 @@
 function [x,stats] = sketch_and_precondition(A,b,varargin)
+%ITERATIVE_SKETCHING Solve A*x = b in the least-squares sense by the
+%sketch-and-precondition method
+%   Optional parameters (use [] for default value):
+%   - d: sketching dimension (default 2*n).
+%   - q: number of steps.
+%   - summary: a function of the current iterate to be recorded at each
+%     iteration. All summary values will be rows of stats, the second
+%     output of this function.
+%   - verbose: if true, print at each iteration.
+%   - opts: specify the solver ('cgne' or 'lsqr') and whether to use a
+%     'warm' start (initial iterate given by sketch-and-solve) or a 'cold'
+%     start (initial iterate zero). Defaults to 'lsqrwarm'
 
     m = size(A,1);
     n = size(A,2);
