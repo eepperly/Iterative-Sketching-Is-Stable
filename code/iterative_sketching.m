@@ -22,10 +22,17 @@ function [x,stats] = iterative_sketching(A,b,varargin)
         d = varargin{1};
     else
         if length(varargin) >= 5 && ~isempty(varargin{5}) && strcmp(varargin{5}, 'optimal') 
-            d = max(ceil(40*m/n), 4*n);
+            if length(varargin) >= 6 && ~isempty(varargin{6}) && strcmp(varargin{6}, 'optimal') 
+                C = 1;
+            else
+                C = sqrt(2);
+            end
+            min_ratio = 4;
         else
-            d = max(ceil(40*m/n), 20*n);
+            C = 2 + sqrt(2);
+            min_ratio = 20;
         end
+        d = max(ceil(C^2 * n * exp(lambertw(4*m/n^2*log(1/eps)/C^2))),min_ratio*n);
     end
     
     if length(varargin) >= 2 && ~isempty(varargin{2})
