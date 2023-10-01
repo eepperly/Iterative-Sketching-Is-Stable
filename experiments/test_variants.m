@@ -41,7 +41,8 @@ end
 
 %% QR
 
-y = A\b;
+[Q,R] = qr(A,'econ');
+y = R\(Q'*b);
 qr_vals = summary(y);
 
 %% Plot
@@ -83,4 +84,10 @@ for j = 1:3
             saveas(gcf,'../figs/sketch_precondition_backward.png')
 	end
     end
+end
+
+%% Save
+
+if real_run
+    save('../data/results_variants.mat', 'lsqrwarm', 'lsqrcold', 'itsk', 'damp', 'mom', 'qr_vals', 'trials')
 end

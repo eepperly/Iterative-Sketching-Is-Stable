@@ -15,13 +15,13 @@ qrs = cell(length(conds), length(res_sizes));
 colors = ["#0072BD","#D95319","#EDB120"];
 markers = '^so';
 
-real_run = false;
+real_run = true;
 
 for idx1 = 1:length(conds)
     cond_A = conds(idx1);
     for idx2 = 1:length(res_sizes)
         res_size = res_sizes(idx2);
-	[A,b,x,r] = random_ls_problem(m,n,cond_A,res_size);
+	    [A,b,x,r] = random_ls_problem(m,n,cond_A,res_size);
 
         if real_run
             summary = @(y) [norm(y-x)/norm(x);norm(b-A*y-r)/norm(b);backward_error_ls(A,b,y)/norm(A,'fro')];
@@ -29,8 +29,9 @@ for idx1 = 1:length(conds)
             summary = @(y) [norm(y-x)/norm(x);norm(b-A*y-r)/norm(b);0];
         end
 
-        [~,itsk{idx1,idx2}]=iterative_sketching(A,b,20*n,100,summary,true);
-        y = A\b;
+        [~,itsk{idx1,idx2}]=iterative_sketching(A,b,20*n,trials,summary,true);
+        [Q,R] = qr(A,'econ');
+        y = R\(Q'*b);
         qrs{idx1,idx2} = summary(y);
     end
 end
@@ -52,7 +53,7 @@ for idx2 = 1:length(res_sizes)
             semilogy(0:trials, itsk_idx(1:(trials+1),j), 'LineWidth', 1,... ...
                 'LineStyle', "none",...
                 'Color', colors{idx1},'MarkerFaceColor',colors{idx1},...
-                'Marker',markers(idx1),'MarkerIndices',1:10:101,...
+                'Marker',markers(idx1),'MarkerIndices',1:10:(trials+1),...
                 'MarkerSize',15); hold on
             yline(qr_idx(j),':', 'LineWidth', 3, 'Color', colors{idx1})
         end
@@ -91,8 +92,8 @@ if real_run
         xlabel('Iteration $i$')
         ylabel('Backward error $\eta(\mbox{\boldmath $\widehat{x}$}_i)//\|\mbox{\boldmath $A$}\|_{\rm F}$')
 	if real_run
-           saveas(gcf, sprintf('r%d_backward.fig', round(-log10(res_sizes(idx2)))))
-           saveas(gcf, sprintf('r%d_backward.png', round(-log10(res_sizes(idx2)))))
+           saveas(gcf, sprintf('../figs/r%d_backward.fig', round(-log10(res_sizes(idx2)))))
+           saveas(gcf, sprintf('../figs/r%d_backward.png', round(-log10(res_sizes(idx2)))))
 	end
     end
 end

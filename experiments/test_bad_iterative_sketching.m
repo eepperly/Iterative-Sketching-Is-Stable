@@ -43,7 +43,8 @@ fprintf('Good approach\n')
 %% QR
 
 fprintf('QR\n')
-y = A\b;
+[Q,R] = qr(A, 'econ');
+y = R\(Q'*b);
 qr_vals = summary(y);
 
 %% Plot
@@ -60,10 +61,10 @@ for j = 1:3
     if j == 1
         ylabel('Forward error $\|\mbox{\boldmath $x$}-\mbox{\boldmath $\widehat{x}$}_i\|/\|\mbox{\boldmath $x$}\|$')
         axis([-Inf Inf 1e-6 1e10])
-        legend('Stable (Alg. 1)',...
+        legend('Stable (Algorithm 2)',...
             'Bad matrix: $(\mbox{\boldmath $SA$})^\top(\mbox{\boldmath $SA$})$',...
             'Bad residual: $\mbox{\boldmath $A^\top b$}-\mbox{\boldmath $A^\top$} (\mbox{\boldmath $A\widehat{x}$}_i)$',...
-            'Bad initial: $\mbox{\boldmath $x$}_0=\mbox{\boldmath $0$}$','QR')
+            'Bad initialization: $\mbox{\boldmath $x$}_0=\mbox{\boldmath $0$}$','QR')
         if real_run
             saveas(gcf,'../figs/bad_forward.fig')
             saveas(gcf,'../figs/bad_forward.png')
@@ -83,3 +84,11 @@ for j = 1:3
         end
     end
 end
+
+
+%% Save
+
+if real_run
+    save('../data/results_bad_iterative_sketching.mat', 'bad1', 'bad2', 'itsk', 'bad3','qr_vals', 'trials')
+end
+
