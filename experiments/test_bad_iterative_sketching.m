@@ -3,6 +3,8 @@
 addpath("bad_implementations/")
 addpath("../code")
 
+rng(223492034)
+
 m = 4000;
 n = 50;
 
@@ -77,7 +79,7 @@ for j = 1:3
             saveas(gcf,'../figs/bad_residual.png')
         end
     elseif j == 3
-        ylabel('Backward error $\eta(\mbox{\boldmath $\widehat{x}$}_i)//\|\mbox{\boldmath $A$}\|_{\rm F}$')
+        ylabel('Backward error $\mbox{BE}(\mbox{\boldmath $\widehat{x}$}_i)$')
         if real_run
             saveas(gcf,'../figs/bad_backward.fig')
             saveas(gcf,'../figs/bad_backward.png')

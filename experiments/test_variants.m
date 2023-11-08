@@ -78,7 +78,7 @@ for j = 1:3
             saveas(gcf,'../figs/sketch_precondition_residual.png')
 	end
     elseif j == 3
-        ylabel('Backward error $\eta(\mbox{\boldmath $\widehat{x}$}_i)//\|\mbox{\boldmath $A$}\|_{\rm F}$')
+        ylabel('Backward error $\mbox{BE}(\mbox{\boldmath $\widehat{x}$}_i)$')
 	if real_run
             saveas(gcf,'../figs/sketch_precondition_backward.fig')
             saveas(gcf,'../figs/sketch_precondition_backward.png')

@@ -2,6 +2,8 @@
 
 addpath('../code')
 
+rng(121842)
+
 m = 4000;
 n = 50;
 
@@ -90,7 +92,7 @@ if real_run
     
         figure(3*(idx2-1)+3)
         xlabel('Iteration $i$')
-        ylabel('Backward error $\eta(\mbox{\boldmath $\widehat{x}$}_i)//\|\mbox{\boldmath $A$}\|_{\rm F}$')
+        ylabel('Backward error $\mbox{BE}(\mbox{\boldmath $\widehat{x}$}_i)$')
 	if real_run
            saveas(gcf, sprintf('../figs/r%d_backward.fig', round(-log10(res_sizes(idx2)))))
            saveas(gcf, sprintf('../figs/r%d_backward.png', round(-log10(res_sizes(idx2)))))
