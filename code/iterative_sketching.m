@@ -79,12 +79,16 @@ function [x,stats] = iterative_sketching(A,b,varargin)
     
     stats = [];
     
-    if exist('sparsesign')
+    if exist('sparsesign','file') == 3
         S = sparsesign(d,m,8);
     else
+        warning(['Using slower and slightly incorrect backup ' ...
+            'implementation sparse_sign_backup.m. For the better ' ...
+            'implementation, build the mex file `sparsesign.c` ' ...
+            'using the command `mex sparsesign.c`.']);
         S = sparse_sign_backup(d,m,8);
     end
-    
+
     B = S*A;
     [Q,R] = qr(B,'econ');
     x = R\(Q'*(S*b));

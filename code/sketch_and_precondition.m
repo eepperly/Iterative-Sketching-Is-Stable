@@ -45,9 +45,13 @@ function [x,stats] = sketch_and_precondition(A,b,varargin)
         opts = '';
     end
     
-    if exist('sparsesign')
+    if exist('sparsesign','file') == 3
         S = sparsesign(d,m,8);
     else
+        warning(['Using slower and slightly incorrect backup ' ...
+            'implementation sparse_sign_backup.m. For the better ' ...
+            'implementation, build the mex file `sparsesign.c` ' ...
+            'using the command `mex sparsesign.c`.']);
         S = sparse_sign_backup(d,m,8);
     end
 
