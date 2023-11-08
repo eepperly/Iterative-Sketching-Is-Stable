@@ -79,7 +79,12 @@ function [x,stats] = iterative_sketching(A,b,varargin)
     
     stats = [];
     
-    S = sparse_sign(d, m, min(8,d));
+    if exist('sparsesign')
+        S = sparsesign(d,m,8);
+    else
+        S = sparse_sign_backup(d,m,8);
+    end
+    
     B = S*A;
     [Q,R] = qr(B,'econ');
     x = R\(Q'*(S*b));

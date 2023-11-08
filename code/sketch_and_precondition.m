@@ -44,8 +44,13 @@ function [x,stats] = sketch_and_precondition(A,b,varargin)
     else
         opts = '';
     end
+    
+    if exist('sparsesign')
+        S = sparsesign(d,m,8);
+    else
+        S = sparse_sign_backup(d,m,8);
+    end
 
-    S = sparse_sign(d,m,8);
     [Q,R] = qr(S*A,'econ');
 
     if contains(opts, 'cold')
