@@ -2,10 +2,11 @@ function [x,stats] = iterative_sketching(A,b,varargin)
 %ITERATIVE_SKETCHING Solve A*x = b in the least-squares sense by the method
 %of iterative sketching
 %   Optional parameters (use [] for default value):
-%   - d: sketching dimension (default max(10*m/n, 20*n) for basic method
-%     and max(10*m/n, 4*n) with optimal damping)
-%   - q: number of steps. If unspecified, number of steps will be
-%     adaptively
+%   - d: sketching dimension (default values are described in the paper)
+%   - q: number of steps or tolerance. If q >= 1, run for q steps. If q <
+%   1, run until the norm change in residual is less than
+%   q*(Anorm * norm(x) + 0.01*Acond*norm(r)), where Anorm and Acond are
+%   estimates of the norm and condition number of A. Defaults to q=eps
 %   - summary: a function of the current iterate to be recorded at each
 %     iteration. All summary values will be rows of stats, the second
 %     output of this function.
@@ -38,7 +39,7 @@ function [x,stats] = iterative_sketching(A,b,varargin)
     if length(varargin) >= 2 && ~isempty(varargin{2})
         q = varargin{2};
     else
-        q = [];
+        q = eps();
     end
     
     if length(varargin) >= 3 && ~isempty(varargin{3})
@@ -97,7 +98,7 @@ function [x,stats] = iterative_sketching(A,b,varargin)
     if ~isempty(summary); stats(end+1,:) = summary(x); end
     
     Acond = condest(R);
-    if isempty(q)
+    if q < 1
         z = randn(n,1);
         for i = 1:ceil(log(n))
             z = z / norm(z); z = R'*z;
@@ -123,10 +124,10 @@ function [x,stats] = iterative_sketching(A,b,varargin)
         if ~isempty(summary); stats(end+1,:) = summary(x); end
         if verbose; fprintf('%d\t%e\n',iter,updatenorm); end
         iter = iter + 1;
-        if (~isempty(q) && iter > q) || (isempty(q) &&...
-                updatenorm <= eps*(Anorm * norm(x) + 0.01*Acond*norm(r)))
+        if (q >= 1 && iter > q) || (q < 1 &&...
+                updatenorm <= q*(Anorm * norm(x) + 0.01*Acond*norm(r)))
             break
-        elseif isempty(q) && iter >= 100
+        elseif q < 1 && iter >= 100
             warning('Iterative sketching failed to meet tolerance')
             break
         end
