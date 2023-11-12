@@ -56,7 +56,7 @@ void mexFunction(
 
 	if (zeta > d) zeta = d;
 
-	double lowval = -idx_per_rand;// -1/sqrt((double) zeta);
+	double lowval = -1/sqrt((double) zeta);
     double increment = -2*lowval;
 
     plhs[0] = mxCreateSparse(d,m,nnz,false);
