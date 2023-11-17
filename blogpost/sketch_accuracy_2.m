@@ -13,6 +13,7 @@ end
 Q4 = [eye(k);zeros(n-k,k)];
 Qs = {Q1,Q2,Q3,Q4};
 good_parameter_setting = true;
+addpath('../code')
 
 ds = round(logspace(2,4,7));
 dis = zeros(length(ds),4);

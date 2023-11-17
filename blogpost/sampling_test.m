@@ -2,6 +2,7 @@ n = 1e5;
 k = 5e1;
 Q = [eye(k);zeros(n-k,k)];
 trials = 100;
+addpath('../code')
 
 uniform = zeros(length(ds),1);
 leverage = zeros(length(ds),1);

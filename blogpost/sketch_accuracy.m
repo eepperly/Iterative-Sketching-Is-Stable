@@ -3,6 +3,7 @@ k = 5e1;
 A = sprand(n,k,1e-2);
 Q = orth(full(A));
 trials = 100;
+addpath('../code')
 
 gaussian = zeros(length(ds),1);
 srtt = zeros(length(ds),1);

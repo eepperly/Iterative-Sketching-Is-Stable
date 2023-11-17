@@ -2,6 +2,7 @@ n = 1e5;
 k = 2e2;
 Q = [eye(k);zeros(n-k,k)];
 trials = 100;
+addpath('../code')
 
 zetas = [1 2 4 8];
 ds = 2*round(logspace(2,4,7));
