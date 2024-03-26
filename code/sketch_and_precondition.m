@@ -63,17 +63,16 @@ function [x,stats] = sketch_and_precondition(A,b,varargin)
         y0 = Q' * (S*b);
     end
 
-    if ~isempty(summary)
-        summary = @(y) summary(R\y);
-    end
-
     if contains(opts, 'cgne')
-        [y,~,stats] = mycg(@(y) A'*(A*y),@(y) R\(R'\y),A'*b,0,q,...
-            summary,y0,verbose);
+        [x,~,stats] = mycg(@(y) A'*(A*y),@(y) R\(R'\y),A'*b,0,q,...
+            summary,R\y0,verbose);
     else
+        if ~isempty(summary)
+            summary = @(y) summary(R\y);
+        end
         [y,~,stats] = mylsqr(@(y) A*(R\y),@(y) R'\(A'*y),b,0,q,...
             summary,y0,verbose);
+        x = R\y;
     end
-    x = R\y;
 
 end
