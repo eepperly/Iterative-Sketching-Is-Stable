@@ -21,23 +21,23 @@ end
 
 %% LSQR Warm
 
-[~,lsqrwarm]=sketch_and_precondition(A,b,20*n,trials,summary,true,'lsqrwarm');
+[~,lsqrwarm]=sketch_and_precondition(A,b,20*n,trials,summary,true,'lsqrwarm',true);
 
 %% LSQR Cold
 
-[~,lsqrcold]=sketch_and_precondition(A,b,20*n,trials,summary,true,'lsqrcold');
+[~,lsqrcold]=sketch_and_precondition(A,b,20*n,trials,summary,true,'lsqrcold',true);
 
 %% Iterative Sketching
 
-[~,itsk]=iterative_sketching(A,b,20*n,trials,summary,true);
+[~,itsk]=iterative_sketching(A,b,20*n,trials,summary,true,[],[],true);
 
 %% Iterative Sketching with Damping
 
-[~,damp]=iterative_sketching(A,b,20*n,trials,summary,true,'optimal');
+[~,damp]=iterative_sketching(A,b,20*n,trials,summary,true,'optimal',[],true);
 
 %% Iterative Sketching with Momentum
 
-[~,mom]=iterative_sketching(A,b,20*n,trials,summary,true,'optimal','optimal');
+[~,mom]=iterative_sketching(A,b,20*n,trials,summary,true,'optimal','optimal',true);
 
 %% QR
 

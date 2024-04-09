@@ -40,7 +40,7 @@ fprintf('Bad approach 3\n')
 %% Iterative sketching
 
 fprintf('Good approach\n')
-[~,itsk]=iterative_sketching(A,b,20*n,trials,summary,true);
+[~,itsk]=iterative_sketching(A,b,20*n,trials,summary,true,[],[],true);
 
 %% QR
 

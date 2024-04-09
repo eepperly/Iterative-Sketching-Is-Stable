@@ -23,7 +23,7 @@ function [x,stats] = bad_iterative_sketching3(A,b,varargin)
     
     stats = [];
     
-    S = sparse_sign(d, m, min(8,d));
+    S = sparsesign_slow(d, m, min(8,d));
     B = S*A;
     [~,R] = qr(B,'econ');
     x = zeros(n,1);

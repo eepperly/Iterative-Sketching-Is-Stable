@@ -23,7 +23,7 @@ function [x,stats] = bad_iterative_sketching2(A,b,varargin)
     
     stats = [];
     
-    S = sparse_sign(d, m, min(8,d));
+    S = sparsesign_slow(d, m, min(8,d));
     B = S*A;
     BB = B'*B;
     dBB = decomposition(BB);

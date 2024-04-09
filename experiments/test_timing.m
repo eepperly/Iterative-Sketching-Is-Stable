@@ -1,6 +1,5 @@
 %% Load SUSY data
 
-rng(249230425)
 addpath('../code')
 load('../data/susy.mat')
 X = X(1:4e6,:); b = b(1:4e6);

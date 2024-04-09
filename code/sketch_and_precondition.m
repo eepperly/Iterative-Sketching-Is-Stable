@@ -54,14 +54,14 @@ function [x,stats] = sketch_and_precondition(A,b,varargin)
     if ~reproducible && exist('sparsesign','file') == 3
         S = sparsesign(d,m,8);
     else
-        warning(['Using slower and slightly incorrect backup ' ...
-            'implementation sparse_sign_backup.m. For the better ' ...
+        warning(['Using slow implementation sparsesign_slow.m. ' ...
+            'For the better ' ...
             'implementation, build the mex file `sparsesign.c` ' ...
             'using the command `mex sparsesign.c`.']);
-        S = sparse_sign_backup(d,m,8);
+        S = sparsesign_slow(d,m,8);
     end
 
-    [Q,R] = qr(S*A,'econ');
+    [Q,R] = qr(full(S*A),'econ');
 
     if contains(opts, 'cold')
         y0 = zeros(n,1);
