@@ -21,6 +21,8 @@ function [x,stats] = iterative_sketching(A,b,varargin)
     
     if length(varargin) >= 1 && ~isempty(varargin{1})
         d = varargin{1};
+    elseif issparse(A)
+        d = 20*n;
     else
         if length(varargin) >= 5 && ~isempty(varargin{5}) && strcmp(varargin{5}, 'optimal') 
             if length(varargin) >= 6 && ~isempty(varargin{6}) && strcmp(varargin{6}, 'optimal') 
@@ -66,6 +68,12 @@ function [x,stats] = iterative_sketching(A,b,varargin)
         momentum = 0;
     end
 
+    if length(varargin) >= 7 && ~isempty(varargin{7})
+        reproducible = varargin{7};
+    else
+        reproducible = false;
+    end
+
     if strcmp(damping, 'optimal') 
         if strcmp(momentum, 'optimal')
             momentum = n/d;
@@ -80,7 +88,7 @@ function [x,stats] = iterative_sketching(A,b,varargin)
     
     stats = [];
     
-    if exist('sparsesign','file') == 3
+    if ~reproducible && exist('sparsesign','file') == 3
         S = sparsesign(d,m,8);
     else
         warning(['Using slower and slightly incorrect backup ' ...
@@ -90,7 +98,7 @@ function [x,stats] = iterative_sketching(A,b,varargin)
         S = sparse_sign_backup(d,m,8);
     end
 
-    B = S*A;
+    B = full(S*A);
     [Q,R] = qr(B,'econ');
     x = R\(Q'*(S*b));
     xold = x;

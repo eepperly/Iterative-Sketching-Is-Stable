@@ -44,8 +44,14 @@ function [x,stats] = sketch_and_precondition(A,b,varargin)
     else
         opts = '';
     end
+
+    if length(varargin) >= 6 && ~isempty(varargin{6})
+        reproducible = varargin{6};
+    else
+        reproducible = false;
+    end
     
-    if exist('sparsesign','file') == 3
+    if ~reproducible && exist('sparsesign','file') == 3
         S = sparsesign(d,m,8);
     else
         warning(['Using slower and slightly incorrect backup ' ...
@@ -66,6 +72,13 @@ function [x,stats] = sketch_and_precondition(A,b,varargin)
     if contains(opts, 'cgne')
         [x,~,stats] = mycg(@(y) A'*(A*y),@(y) R\(R'\y),A'*b,0,q,...
             summary,R\y0,verbose);
+    elseif contains(opts, 'sym')
+        if ~isempty(summary)
+            summary = @(y) summary(R\y);
+        end
+        [y,~,stats] = mycg(@(y) R'\(A'*(A*(R\y))),@(y) y,R'\(A'*b),0,q,...
+            summary,y0,verbose);
+        x = R\y;
     else
         if ~isempty(summary)
             summary = @(y) summary(R\y);
