@@ -12,6 +12,7 @@ Code to reproduce the numerical experiments from the paper are found in `experim
 - Figure 2 (`experiments/test_variants.m`): Compares the performance iterative sketching (including versions with damping and momentum) to sketch-and-precondition (with both the zero and sketch-and-solve initializations).
 - Figure 3 (`experiments/test_bad_iterative_sketching.m`): Compare the stable implementation of iterative sketching (in `code/iterative_sketching.m`) to three "bad" implementations.
 - Figure 4 (`experiments/test_timing.m`): Compares the runtime of iterative sketching (including versions with damping and momentum) to MATLAB's `mldivide` on a simplified kernel regression task.
+- Figure 5 (`experiments/test_sparse.m`): Compares the runtime of iterative sketching to MATLAB's `mldivide` for solving random sparse least-squares problems with three nonzeros per row.
 
 ## Randomized least-squares solvers
 
@@ -72,6 +73,7 @@ The optional inputs are as follows:
 - `verbose`: if true, output at every iteration. (_Default value_: `false`)
 - `damping`: damping coefficient. To use the optimal value, set `damping` to `'optimal'`. (_Default value_: 1, i.e., no damping).
 - `momentum`: momentum coefficient. To use the optimal value, set both `damping` and `momentum` to `'optimal'`. (_Default value_: 0, i.e., no momentum).
+- `reproducible`: if true, use a slow, but reproducible implementation of sparse sign embeddings. (_Default value_: `false`)
 
 Inputting a value of `[]` for an optional argument results in the default value.
 
@@ -95,5 +97,6 @@ The optional inputs are as follows:
 - `summary`: a function of `x` to be recorded at every iteration. The results will be outputted in the optional output argument `stats`. (_Default value_: None)
 - `verbose`: if true, output at every iteration. (_Default value_: `false`)
 - `opts`: specifies the initial iterate $x_0$ and iterative method (LSQR or CGNE). If `'cold'` is a substring of `opts`, then the initial iterate is chosen to be $x_0 = 0$. Otherwise, we use a warm start and choose $x_0$ to be the [sketch-and-solve solution](https://ar5iv.labs.arxiv.org/html/2002.01387#S10.SS3). If `cgne` is a substring of `opts`, then we solve $Ax = b$ using CGNE; otherwise, we use LSQR. (_Default value_: `''`)
+- `reproducible`: if true, use a slow, but reproducible implementation of sparse sign embeddings. (_Default value_: `false`)
 
 Inputting a value of `[]` for an optional argument results in the default value.
