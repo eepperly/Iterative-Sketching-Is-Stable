@@ -2,9 +2,9 @@
 
 addpath('../code')
 load('../data/susy.mat')
-X = X(1:4e6,:); b = b(1:4e6);
+X = X(1:1e6,:); b = b(1:1e6);
 bandwidth = 4;
-S = randsample(4e6,1e3);
+S = randsample(1e6,1e3);
 A = exp(-pdist2(X,X(S,:),"euclidean").^2 / (2*bandwidth^2));
 
 sizes = round(logspace(1,3,11));
@@ -75,7 +75,7 @@ loglog(sizes, damps(:,1), '^', 'LineWidth',1,'Color',"#7E2F8E",...
     'MarkerFaceColor',"#7E2F8E",'MarkerSize',10);
 loglog(sizes, moms(:,1), 'o', 'LineWidth',1,'Color',"#77AC30",...
     'MarkerFaceColor',"#77AC30",'MarkerSize',10);
-legend({'QR', 'IS', 'IS+damping', 'IS+momentum'},'Location','best')
+legend({'\texttt{mldivide}', 'IS', 'IS+damping', 'IS+momentum'},'Location','best')
 
 if real_run
     saveas(gcf, '../figs/susy_times.fig')
