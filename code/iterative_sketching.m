@@ -5,7 +5,7 @@ function [x,stats] = iterative_sketching(A,b,varargin)
 %   - d: sketching dimension (default values are described in the paper)
 %   - q: number of steps or tolerance. If q >= 1, run for q steps. If q <
 %   1, run until the norm change in residual is less than
-%   q*(Anorm * norm(x) + 0.01*Acond*norm(r)), where Anorm and Acond are
+%   q*(Anorm * norm(x) + 0.04*Acond*norm(r)), where Anorm and Acond are
 %   estimates of the norm and condition number of A. Defaults to q=eps
 %   - summary: a function of the current iterate to be recorded at each
 %     iteration. All summary values will be rows of stats, the second
@@ -22,7 +22,14 @@ function [x,stats] = iterative_sketching(A,b,varargin)
     if length(varargin) >= 1 && ~isempty(varargin{1})
         d = varargin{1};
     elseif issparse(A)
-        d = 20*n;
+        d = 30*n;
+        if length(varargin) >= 5 && ~isempty(varargin{5}) && strcmp(varargin{5}, 'optimal') 
+            if length(varargin) >= 6 && ~isempty(varargin{6}) && strcmp(varargin{6}, 'optimal') 
+                d = 30*n;
+            else
+                d = 30*n;
+            end
+        end
     else
         if length(varargin) >= 5 && ~isempty(varargin{5}) && strcmp(varargin{5}, 'optimal') 
             if length(varargin) >= 6 && ~isempty(varargin{6}) && strcmp(varargin{6}, 'optimal') 
@@ -133,7 +140,7 @@ function [x,stats] = iterative_sketching(A,b,varargin)
         if verbose; fprintf('%d\t%e\n',iter,updatenorm); end
         iter = iter + 1;
         if (q >= 1 && iter > q) || (q < 1 &&...
-                updatenorm <= q*(Anorm * norm(x) + 0.01*Acond*norm(r)))
+                updatenorm <= q*(Anorm * norm(x) + 0.04*Acond*norm(r)))
             break
         elseif q < 1 && iter >= 100
             warning('Iterative sketching failed to meet tolerance')
